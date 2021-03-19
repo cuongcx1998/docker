@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  sun_web:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: sun_php
+    privileged: true
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - sun_db
+    ports:
+      - 8000:80
+    links:
+      - sun_db
+
+  sun_db:
+    image: 'mariadb:5.5'
+    container_name: sun_db
+    environment:
+      MYSQL_DATABASE: sys_inquiry
+      MYSQL_ROOT_PASSWORD: root
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - 3308:3306
+volumes:
+  mysql_data:
+    driver: local
+  
